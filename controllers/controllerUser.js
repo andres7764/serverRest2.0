@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var BoxoUsers = mongoose.model('boxousers');
+var service = require('../public/helpers/services');
 
 //GET - Return all usersBD in the DB (The colection of users)
 exports.showAllUsers = function(req, res) {
@@ -22,22 +23,21 @@ exports.addNewUser = function(req, res) {
         dbB_locationSaved:  req.body.ubicacion,
         dbB_typeRol:  		req.body.rol,
         dbB_email:  		req.body.email,
-        dbB_fechaRegistro:      req.body.fechaRegistro
-     
-});
-    
+        dbB_fechaRegistro:      req.body.fechaRegistro  
+    });
     newUser.save(function(err, newUser) {
         if(err) { return res.status(500).send(err.message); }
-	    res.status(200).jsonp(newUser);
+	    res.status(200).status({token: service.createToken(newUser)});
+        //res.status(200).jsonp(newUser);
     });
 };
 
-exports.deleteUser = function(req, res) {  
-    	BoxoUsers.findById(req.params.id, function(err, boxoDb) {
+exports.deleteUser = function(req, res) {
+    	BoxoUsers.findById(req.params.id, function(err, boxoUser) {
         boxoDb.remove(function(err) {
         if(err)
             return res.status(500).send(err.message);
-      	res.status(200).send();
+      	res.status(200).send({token: service.createToken(boxoUser)});
         })
     });
 };

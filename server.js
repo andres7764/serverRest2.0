@@ -10,12 +10,11 @@
 	var io = require('socket.io')(http);
 	var jwt        = require('jwt-simple');
 	var cors       = require('cors');
-	var moment = require('moment');  
+	var moment = require('moment');
 	var request = require('request');
 	var qs         = require('querystring');
-	var config = require('./public/secret.json');
-// configuration ======================================================================
 
+// configuration ======================================================================
 	//mongoose.connect('mongodb://' + argv.be_ip + ':80/boxoApp');
 	mongoose.connect('mongodb://localhost/boxoApp');
     //app.use('/public', express.static(__dirname + '/public'));
@@ -24,7 +23,7 @@
     app.use(express.static('/'));
    	app.use('/bower_components', express.static(__dirname + '/bower_components'));
 	app.use(morgan('dev')); 										// log every request to the console
-	app.use(bodyParser.urlencoded({ extended : false})); 			// parse application/x-www-form-urlencoded
+	app.use(bodyParser.urlencoded({ extended : true})); 			// parse application/x-www-form-urlencoded
 	app.use(bodyParser.json()); 									// parse application/json
 	app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 	app.use(methodOverride());
@@ -33,6 +32,8 @@
     var models = require('./models/modelBdBoxo');
     var controllerUser = require('./controllers/controllerUser'); 
     var requestsMsg = require('./models/modelBdRequest');
+	var config = require('./public/secret.json');
+	//qvar middleware = require('./public/helpers/middleware');
 
 //Token de autenticación
 function createJWT(userId) {
@@ -79,11 +80,15 @@ app.post('/auth/twitter', function(req, res) {
 
 //Create routes by server rest API ====================================================
     var boxoRoutes = express.Router();
+  //	boxoRoutes.post('/auth/signup', auth.emailSignup);  
+    
     boxoRoutes.route('/getUsers')
     .get(controllerUser.showAllUsers)
     // .put(controllerUser.updateUser); // Edit information
    // boxoRoutes.route('/getUniqueUser/:id')
   //  .get(controllerUser.getUniqueUser)
+
+//	boxoRoutes.post('/auth/login', auth.emailLogin);
 
     boxoRoutes.route('/addUser')
     .post(controllerUser.addNewUser)
